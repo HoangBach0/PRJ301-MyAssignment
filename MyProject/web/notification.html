@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>Login failed! You will be redirected to login within next <span id="counter">3</span> seconds</div>
+    </body>
+    <script>
+        var count = 3;
+
+        function countdown()
+        {
+            count--;
+            document.getElementById("counter").innerHTML = count;
+            if (count <= 0)
+                window.location.href = "login";
+        }
+
+        setInterval(countdown,1000);
+
+
+    </script>
+</html>
