@@ -30,15 +30,27 @@ public class LoginController extends HttpServlet {
         if (account != null) {
             HttpSession session = req.getSession();
             session.setAttribute("account", account);
-            resp.getWriter().println("Login successfully! "+ account.getUsername());
+            req.getRequestDispatcher("welcome.jsp").forward(req, resp);
         } else {
+            {
+            String error = req.getParameter("error");
+            if ("access_denied".equals(error)) {
+                req.setAttribute("error", "You must login!");
+            } else {
+                req.setAttribute("error", "Incorrect username or password!");
+            }
             req.getRequestDispatcher("notification.html").forward(req, resp);
+        }
         }
     }
     
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String error = req.getParameter("error");
+        if ("access_denied".equals(error)) {
+            req.setAttribute("error", "You must login!");
+        }
         req.getRequestDispatcher("/login.jsp").forward(req, resp);
     }
     
