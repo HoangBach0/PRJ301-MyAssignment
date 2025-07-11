@@ -37,8 +37,8 @@ public class LeaveController extends HttpServlet {
         LeaveRequestDBContext dbContext = new LeaveRequestDBContext();
         dbContext.insert(leaveRequest);
 
-        resp.getWriter().println("Yêu cầu xin nghỉ đã được gửi!");
-        resp.sendRedirect("welcome.jsp");
+        resp.getWriter().println("Leave request has been sent!");
+        
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

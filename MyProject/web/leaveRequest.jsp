@@ -45,13 +45,11 @@
         function validateForm(event) {
             const startDate = new Date(document.querySelector('[name="startDate"]').value);
             const endDate = new Date(document.querySelector('[name="endDate"]').value);
-
             if (endDate <= startDate) {
                 alert("Ngày kết thúc phải lớn hơn ngày bắt đầu.");
                 event.preventDefault();
             }
         }
-
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.querySelector("form");
             form.addEventListener("submit", validateForm);
