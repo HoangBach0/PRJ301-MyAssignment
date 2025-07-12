@@ -33,11 +33,12 @@ public class LeaveController extends HttpServlet {
         String endDate = req.getParameter("endDate");
         String reason = req.getParameter("reason");
 
-        LeaveRequest leaveRequest = new LeaveRequest(0, account.getEmployeeId(), startDate, endDate, reason);
+        LeaveRequest leaveRequest = new LeaveRequest(0,account.getEmployeeId(),startDate,endDate,reason,"Pending" );
         LeaveRequestDBContext dbContext = new LeaveRequestDBContext();
         dbContext.insert(leaveRequest);
 
-        resp.getWriter().println("Leave request has been sent!");
+        session.setAttribute("successMessage", "Đăng ký xin nghỉ thành công!");
+        resp.sendRedirect("leaveRequest");
         
     }
     @Override

@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="model.Account" %>
+<%@page import="model.Account, dal.AccountDBContext" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,14 +15,34 @@
 <body>
     <h2>Đăng ký xin nghỉ</h2>
     <% 
-        if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login?error=access_denied");
+
+    if (session == null || session.getAttribute("account") == null) {
+        response.sendRedirect("login?error=access_denied");
+    } else {
+        Account account = (Account) session.getAttribute("account");
+        AccountDBContext dbContext = new AccountDBContext();
+        int employeeId = account.getEmployeeId();
+        String role = dbContext.getRoleByEmployeeId(employeeId);
+        if (role.equals("Division Leader")) {
+            response.sendRedirect("welcome?error=access_denied_role");
         } else {
-            Account account = (Account) session.getAttribute("account");
+            boolean showForm = role.equals("Trưởng nhóm") || role.equals("Nhân viên");
     %>
     <%
     java.time.LocalDate today = java.time.LocalDate.now();
     java.time.LocalDate tomorrowandfuture = today.plusDays(1);
+    %>
+    <% if (showForm) { %>
+    <% 
+        String successMessage = (String) session.getAttribute("successMessage");
+        if (successMessage != null) {
+    %>
+        <script>
+            alert("<%= successMessage %>");
+        </script>
+    <%
+            session.removeAttribute("successMessage");
+        }
     %>
     <form action="leaveRequest" method="POST">
         <label>Nhân viên: <%= account.getUsername() %></label><br/>
@@ -38,7 +58,11 @@
 
         <input type="submit" value="Send">
     </form>
-        
+    <% } else if (role.equals("Division Leader") || role.equals("Trưởng nhóm")) { %>
+        <p><a href="approveLeave.jsp">Duyệt đơn xin nghỉ</a></p>
+    <% } else { %>
+        <p>Bạn không có quyền đăng ký hoặc duyệt đơn. Vui lòng liên hệ quản lý.</p>
+    <% } %>    
         <p><a href="welcome.jsp">Quay lại</a></p>
     <% } %>
     <script>
@@ -55,5 +79,8 @@
             form.addEventListener("submit", validateForm);
         });
     </script>
+    <%
+        } 
+    %>
 </body>
 </html>

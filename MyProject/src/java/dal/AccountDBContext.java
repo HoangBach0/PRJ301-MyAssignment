@@ -22,6 +22,22 @@ public class AccountDBContext extends DBContext<Account> {
     public ArrayList<Account> list() {
     return null;
     }
+    public String getRoleByEmployeeId(int employeeId) {
+    String sql = "SELECT r.role_name FROM [dbo].[Employees] e " +
+                 "JOIN [dbo].[Roles] r ON e.role_id = r.role_id " +
+                 "WHERE e.employee_id = ?";
+    try (PreparedStatement stm = connection.prepareStatement(sql)) {
+        stm.setInt(1, employeeId);
+        try (ResultSet rs = stm.executeQuery()) {
+            if (rs.next()) {
+                return rs.getString("role_name");
+            }
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(AccountDBContext.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return null;
+}
 
     public Account get(String username, String password) {
     String sql = "SELECT account_id, employee_id, username, password_hash, last_login FROM [dbo].[Accounts] WHERE username = ? AND password_hash = ?";

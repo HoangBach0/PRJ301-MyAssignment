@@ -13,19 +13,20 @@ public class LeaveRequest extends BaseModel {
     private String startDate;
     private String endDate;
     private String reason;
+    private String status;
 
     public LeaveRequest() {
     }
 
-    public LeaveRequest(int id, int employeeId, String startDate, String endDate, String reason) {
-        setId(id); // Kế thừa từ BaseModel
+    public LeaveRequest(int id, int employeeId, String startDate, String endDate, String reason, String status) {
+        this.setId(id);
         this.employeeId = employeeId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.reason = reason;
+        this.status = status;
     }
 
-    // Getter và Setter
     public int getEmployeeId() {
         return employeeId;
     }
@@ -57,4 +58,13 @@ public class LeaveRequest extends BaseModel {
     public void setReason(String reason) {
         this.reason = reason;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
 }
