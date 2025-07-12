@@ -55,7 +55,6 @@
                 <form action="approveLeave" method="POST">
                     <input type="hidden" name="requestId" value="<%= req.getId() %>">
                     <select name="status">
-                        <option value="Inprogress" <%= "Inprogress".equals(req.getStatus()) ? "selected" : "" %>>Inprogress</option>
                         <option value="Approved" <%= "Approved".equals(req.getStatus()) ? "selected" : "" %>>Approved</option>
                         <option value="Rejected" <%= "Rejected".equals(req.getStatus()) ? "selected" : "" %>>Rejected</option>
                     </select>
