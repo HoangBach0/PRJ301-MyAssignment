@@ -97,3 +97,14 @@ INSERT INTO [dbo].[Accounts] (employee_id, username, password_hash, last_login) 
 ((SELECT employee_id FROM [dbo].[Employees] WHERE email = 'g.mr@company.com'), 'mrg', '123', '2025-07-05 09:00:00'),
 ((SELECT employee_id FROM [dbo].[Employees] WHERE email = 'h.mr@company.com'), 'mrh', '123', '2025-07-05 10:00:00'),
 ((SELECT employee_id FROM [dbo].[Employees] WHERE email = 'hoangbach.nguyen@company.com'), 'hoangbach', '123', '2025-07-09 01:59:00');
+
+CREATE TABLE [dbo].[LeaveRequests] (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    employee_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason NVARCHAR(255) NOT NULL,
+    status NVARCHAR(50) DEFAULT 'Inprogress',
+    created_at DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (employee_id) REFERENCES [dbo].[Employees](employee_id)
+);
