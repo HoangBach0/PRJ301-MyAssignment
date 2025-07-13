@@ -108,3 +108,7 @@ CREATE TABLE [dbo].[LeaveRequests] (
     created_at DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (employee_id) REFERENCES [dbo].[Employees](employee_id)
 );
+
+ALTER TABLE LeaveRequests
+ADD processed_by INT NULL
+    FOREIGN KEY REFERENCES Employees(employee_id);

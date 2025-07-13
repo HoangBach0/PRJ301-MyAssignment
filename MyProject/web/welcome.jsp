@@ -28,6 +28,7 @@
         <% if (role.equals("Division Leader") || role.equals("Trưởng nhóm")) { %>
             <a href="approveLeave">Duyệt đơn xin nghỉ</a><br/>
         <% } %>
+        <a href="login">Đăng xuất</a><br/>
     </p>
 </body>
 </html>
