@@ -4,12 +4,15 @@
  */
 package controller;
 
+import dal.AccountDBContext;
 import dal.LeaveRequestDBContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import model.Account;
 
 /**
  *
@@ -18,14 +21,28 @@ import java.io.IOException;
 public class ApproveLeaveController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int requestId = Integer.parseInt(req.getParameter("requestId"));
-        String status = req.getParameter("status");
-        
-        LeaveRequestDBContext db = new LeaveRequestDBContext();
-        // Cập nhật trạng thái đơn (cần thêm bảng hoặc cột trạng thái)
-        db.updateStatus(requestId, status);
+    HttpSession session = req.getSession(false);
+    if (session == null || session.getAttribute("account") == null) {
+        resp.sendRedirect("login?error=access_denied");
+        return;
+    }
 
-        resp.sendRedirect("approveLeave.jsp");
+    Account account = (Account) session.getAttribute("account");
+    AccountDBContext dbContext = new AccountDBContext();
+    String role = dbContext.getRoleByEmployeeId(account.getEmployeeId());
+    if (!role.equals("Division Leader") && !role.equals("Trưởng nhóm")) {
+        resp.sendRedirect("welcome?error=access_denied_role");
+        return;
+    }
+
+    int requestId = Integer.parseInt(req.getParameter("requestId"));
+    String status = req.getParameter("status");
+    
+    LeaveRequestDBContext db = new LeaveRequestDBContext();
+        
+    db.updateStatus(requestId, status, account.getEmployeeId());
+    
+    resp.sendRedirect("approveLeave.jsp");
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
