@@ -33,7 +33,7 @@ public class LeaveController extends HttpServlet {
         String endDate = req.getParameter("endDate");
         String reason = req.getParameter("reason");
 
-        LeaveRequest leaveRequest = new LeaveRequest(0,account.getEmployeeId(),startDate,endDate,reason,"Pending" );
+        LeaveRequest leaveRequest = new LeaveRequest(0,account.getEmployeeId(),startDate,endDate,reason,"Inprogress",null);
         LeaveRequestDBContext dbContext = new LeaveRequestDBContext();
         dbContext.insert(leaveRequest);
 

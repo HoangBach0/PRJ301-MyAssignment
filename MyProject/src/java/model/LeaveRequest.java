@@ -14,17 +14,19 @@ public class LeaveRequest extends BaseModel {
     private String endDate;
     private String reason;
     private String status;
-
+    private Integer processedBy;
+    
     public LeaveRequest() {
     }
 
-    public LeaveRequest(int id, int employeeId, String startDate, String endDate, String reason, String status) {
+    public LeaveRequest(int id, int employeeId, String startDate, String endDate, String reason, String status, Integer processedBy) {
         this.setId(id);
         this.employeeId = employeeId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.reason = reason;
         this.status = status;
+        this.processedBy = processedBy;
     }
 
     public int getEmployeeId() {
@@ -66,5 +68,13 @@ public class LeaveRequest extends BaseModel {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-}
+
+    public Integer getProcessedBy() {
+        return processedBy;
+    }
+
+    public void setProcessedBy(Integer processedBy) {
+        this.processedBy = processedBy;
+    }
+
+    }
