@@ -19,55 +19,76 @@ import model.LeaveRequest;
 public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
 
     public ArrayList<LeaveRequest> listByManager(int managerId, boolean isDivisionLeader) {
-    ArrayList<LeaveRequest> requests = new ArrayList<>();
-    String sql;
+        ArrayList<LeaveRequest> requests = new ArrayList<>();
+        String sql;
 
-    if (isDivisionLeader) {
-        sql = "SELECT lr.id, lr.employee_id, lr.start_date, lr.end_date, lr.reason, lr.status " +
-              "FROM LeaveRequests lr";
-    } else {
-        sql = "SELECT lr.id, lr.employee_id, lr.start_date, lr.end_date, lr.reason, lr.status " +
-              "FROM LeaveRequests lr " +
-              "JOIN Employees e ON lr.employee_id = e.employee_id " +
-              "WHERE e.manager_id = ?";
-    }
-
-    try (PreparedStatement stm = connection.prepareStatement(sql)) {
-        if (!isDivisionLeader) {
-            stm.setInt(1, managerId);
+        if (isDivisionLeader) {
+            sql = "SELECT lr.id, lr.employee_id, lr.start_date, lr.end_date, lr.reason, lr.status, lr.processed_by " +
+                  "FROM LeaveRequests lr";
+        } else {
+            sql = "SELECT lr.id, lr.employee_id, lr.start_date, lr.end_date, lr.reason, lr.status, lr.processed_by " +
+                  "FROM LeaveRequests lr " +
+                  "JOIN Employees e ON lr.employee_id = e.employee_id " +
+                  "WHERE e.manager_id = ?";
         }
 
-        try (ResultSet rs = stm.executeQuery()) {
-            while (rs.next()) {
-                requests.add(new LeaveRequest(
-                    rs.getInt("id"),
-                    rs.getInt("employee_id"),
-                    rs.getString("start_date"),
-                    rs.getString("end_date"),
-                    rs.getString("reason"),
-                    rs.getString("status")
-                ));
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            if (!isDivisionLeader) {
+                stm.setInt(1, managerId);
             }
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    requests.add(new LeaveRequest(
+                        rs.getInt("id"),
+                        rs.getInt("employee_id"),
+                        rs.getString("start_date"),
+                        rs.getString("end_date"),
+                        rs.getString("reason"),
+                        rs.getString("status"),
+                        rs.getObject("processed_by") != null ? rs.getInt("processed_by") : null
+                    ));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } catch (SQLException ex) {
-        Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        return requests;
     }
-    return requests;
-}
 
     @Override
     public LeaveRequest get(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = "SELECT id, employee_id, start_date, end_date, reason, status, processed_by FROM [dbo].[LeaveRequests] WHERE id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, id);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return new LeaveRequest(
+                        rs.getInt("id"),
+                        rs.getInt("employee_id"),
+                        rs.getString("start_date"),
+                        rs.getString("end_date"),
+                        rs.getString("reason"),
+                        rs.getString("status"),
+                        rs.getObject("processed_by") != null ? rs.getInt("processed_by") : null
+                    );
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public void insert(LeaveRequest model) {
-        String sql = "INSERT INTO [dbo].[LeaveRequests] (employee_id, start_date, end_date, reason) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO [dbo].[LeaveRequests] (employee_id, start_date, end_date, reason, status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setInt(1, model.getEmployeeId());
             stm.setString(2, model.getStartDate());
             stm.setString(3, model.getEndDate());
             stm.setString(4, model.getReason());
+            stm.setString(5, model.getStatus() != null ? model.getStatus() : "Inprogress");
             stm.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
@@ -76,47 +97,63 @@ public class LeaveRequestDBContext extends DBContext<LeaveRequest> {
 
     @Override
     public void update(LeaveRequest model) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void delete(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ArrayList<LeaveRequest> list() {
         ArrayList<LeaveRequest> requests = new ArrayList<>();
-            String sql = "SELECT id, employee_id, start_date, end_date, reason, status FROM [dbo].[LeaveRequests]";
-            try (PreparedStatement stm = connection.prepareStatement(sql)) {
-                try (ResultSet rs = stm.executeQuery()) {
-                    while (rs.next()) {
-                        requests.add(new LeaveRequest(
-                            rs.getInt("id"),
-                            rs.getInt("employee_id"),
-                            rs.getString("start_date"),
-                            rs.getString("end_date"),
-                            rs.getString("reason"),
-                            rs.getString("status")
-                        ));
-                    }
+        String sql = "SELECT id, employee_id, start_date, end_date, reason, status, processed_by FROM [dbo].[LeaveRequests]";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    requests.add(new LeaveRequest(
+                        rs.getInt("id"),
+                        rs.getInt("employee_id"),
+                        rs.getString("start_date"),
+                        rs.getString("end_date"),
+                        rs.getString("reason"),
+                        rs.getString("status"),
+                        rs.getObject("processed_by") != null ? rs.getInt("processed_by") : null
+                    ));
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return requests;
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-    
-    public void updateStatus(int requestId, String status) {
-        String sql = "UPDATE [dbo].[LeaveRequests] SET status = ? WHERE id = ?";
+        return requests;
+    }
+
+    // ✅ Sửa hàm này để cập nhật processed_by
+    public void updateStatus(int requestId, String status, int processedBy) {
+        String sql = "UPDATE [dbo].[LeaveRequests] SET status = ?, processed_by = ? WHERE id = ?";
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, status);
-            stm.setInt(2, requestId);
+            stm.setInt(2, processedBy);
+            stm.setInt(3, requestId);
             stm.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public String getEmployeeName(int employeeId) {
+        String sql = "SELECT first_name + ' ' + last_name AS full_name FROM [dbo].[Employees] WHERE employee_id = ?";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, employeeId);
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("full_name");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LeaveRequestDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "Unknown";
+    }
 }
