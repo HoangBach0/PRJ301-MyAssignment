@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import model.Account;
 
 /**
@@ -39,8 +41,19 @@ public class ApproveLeaveController extends HttpServlet {
     String status = req.getParameter("status");
     
     LeaveRequestDBContext db = new LeaveRequestDBContext();
-        
     db.updateStatus(requestId, status, account.getEmployeeId());
+    
+    // Lưu thời gian xử lý vào session với requestId
+    Map<Integer, Long> processedTimes = (Map<Integer, Long>) session.getAttribute("processedTimes");
+    if (processedTimes == null) {
+        processedTimes = new HashMap<>();
+    }
+    processedTimes.put(requestId, System.currentTimeMillis());
+    session.setAttribute("processedTimes", processedTimes);
+
+        // Gửi thông báo cho cấp dưới
+    int employeeId = db.get(requestId).getEmployeeId();
+    session.setAttribute("notification_" + employeeId, "Đơn xin nghỉ của bạn đã được xử lý!");   
     
     resp.sendRedirect("approveLeave.jsp");
     }
