@@ -12,6 +12,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Welcome</title>
+    <link rel="stylesheet" href="design/style.css"/>
 </head>
 <body>
     <h2>Chào mừng, <%= ((Account)session.getAttribute("account")).getUsername() %>!</h2>
