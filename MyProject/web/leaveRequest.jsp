@@ -6,27 +6,28 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="model.Account, dal.AccountDBContext" %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Đăng ký xin nghỉ</title>
+    <link rel="stylesheet" href="design/style.css"/>
 </head>
 <body>
     <h2>Đăng ký xin nghỉ</h2>
     <% 
-
-    if (session == null || session.getAttribute("account") == null) {
-        response.sendRedirect("login?error=access_denied");
-    } else {
-        Account account = (Account) session.getAttribute("account");
-        AccountDBContext dbContext = new AccountDBContext();
-        int employeeId = account.getEmployeeId();
-        String role = dbContext.getRoleByEmployeeId(employeeId);
-        if (role.equals("Division Leader")) {
-            response.sendRedirect("welcome?error=access_denied_role");
+        if (session == null || session.getAttribute("account") == null) {
+            response.sendRedirect("login?error=access_denied");
         } else {
-            boolean showForm = role.equals("Trưởng nhóm") || role.equals("Nhân viên");
+            Account account = (Account) session.getAttribute("account");
+            AccountDBContext dbContext = new AccountDBContext();
+            int employeeId = account.getEmployeeId();
+            String role = dbContext.getRoleByEmployeeId(employeeId);
+            if (role.equals("Division Leader")) {
+                response.sendRedirect("welcome?error=access_denied_role");
+            } else {
+                boolean showForm = role.equals("Trưởng nhóm") || role.equals("Nhân viên");
     %>
     <%
     java.time.LocalDate today = java.time.LocalDate.now();
@@ -35,6 +36,7 @@
     <% if (showForm) { %>
     <% 
         String successMessage = (String) session.getAttribute("successMessage");
+        String notification = (String) session.getAttribute("notification_" + employeeId);
         if (successMessage != null) {
     %>
         <script>
@@ -42,6 +44,14 @@
         </script>
     <%
             session.removeAttribute("successMessage");
+        }
+        if (notification != null) {
+    %>
+        <script>
+            alert("<%= notification %>");
+        </script>
+    <%
+            session.removeAttribute("notification_" + employeeId);
         }
     %>
     <form action="leaveRequest" method="POST">

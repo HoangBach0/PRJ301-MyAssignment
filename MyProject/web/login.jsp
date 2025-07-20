@@ -10,12 +10,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
           <title>Login</title>
+          <link rel="stylesheet" href="design/style.css"/>
     </head>
     <body>
+        <div class="login-container">
         <form action="login" method="POST">
             username:<input type="text" name="username"/><br/>
             password:<input type="password" name="password"/> <br/>
             <input type="submit" value="login"/>
         </form>
+        </div>
     </body>
 </html>
