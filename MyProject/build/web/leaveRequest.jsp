@@ -73,7 +73,9 @@
     <% } else { %>
         <p>Bạn không có quyền đăng ký hoặc duyệt đơn. Vui lòng liên hệ quản lý.</p>
     <% } %>    
+        <div class="quaylai-info">
         <p><a href="welcome.jsp">Quay lại</a></p>
+        </div>
     <% } %>
     <script>
         function validateForm(event) {

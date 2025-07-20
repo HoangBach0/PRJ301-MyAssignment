@@ -28,6 +28,7 @@
             LeaveRequest req = db.get(requestId);
             if (req != null) {
         %>
+        <form action="approveLeave" method="POST">
         <div class="leave-info-container">
             <div class="leave-info">
                 <p><strong>Reason:</strong> <%= req.getReason() %></p>
@@ -49,6 +50,7 @@
                 <textarea name="reason" rows="4" cols="50" required></textarea><br/>
                 <input type="submit" value="Cập nhật" <%= ("Approved".equals(req.getStatus()) || "Rejected".equals(req.getStatus())) ? "disabled" : "" %>>
                 </div>
+                </form>
         <% } else { %>
         <p style="color: red;">Không tìm thấy đơn xin nghỉ với ID <%= requestId %>.</p>
         <% } %>

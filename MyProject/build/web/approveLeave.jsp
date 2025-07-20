@@ -87,7 +87,7 @@
         %>
     </table>
     <div class="quaylai-info">
-        <p><a href="approveLeave.jsp">Quay lại</a></p>
+        <p><a href="welcome.jsp">Quay lại</a></p>
         </div>
 </body>
 </html>
